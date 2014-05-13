@@ -10,7 +10,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -58,8 +60,8 @@ public class SessionManager {
 		connection.setRequestProperty("Accept-Encoding", "gzip,deflate,sdch");
 		connection.setRequestProperty("Accept-Language", "en-US,en;q=0.8");
 		connection.setRequestProperty("Connection", "keep-alive");
-		connection.setRequestProperty("Content-Length",
-				Integer.toString(postParams.length()));
+		//connection.setRequestProperty("Content-Length", Integer.toString(postParams.length()));
+		connection.setFixedLengthStreamingMode(postParams.getBytes().length);
 		connection.setRequestProperty("Content-Type",
 				"application/x-www-form-urlencoded");
 		// COOKIES
@@ -72,9 +74,9 @@ public class SessionManager {
 
 		connection.setRequestProperty("Referrer",
 				"http://twocansandstring.com/login/");
-
+		//connection.setInstanceFollowRedirects(true);
 		connection.setDoOutput(true);
-		connection.setDoInput(true);
+		//connection.setDoInput(true);
 
 		// Send post request
 		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
@@ -96,7 +98,21 @@ public class SessionManager {
 			response.append(inputLine);
 		}
 		in.close();
-		System.out.println(response.toString());
+		
+		// debug shows cookies
+		List<String> currCookies = connection.getHeaderFields().get(
+				"Set-Cookie");
+		for(String a: currCookies){
+			System.out.println(a);
+		}
+
+		// debug; prints success iff logged in
+		// System.out.println(response.toString());
+		if (response.toString().matches(".*?[Kk]ylemsguy.*?")) {
+			System.out.println("Login Successful");
+		} else {
+			System.out.println("Login Failed");
+		}
 	}
 
 	private String getPageContent(String url) throws Exception {
@@ -138,7 +154,8 @@ public class SessionManager {
 		in.close();
 
 		// Get the response cookies
-		setCookies(connection.getHeaderFields().get("Set-Cookie"));
+		this.setCookies(connection.getHeaderFields().get("Set-Cookie"));
+
 
 		return response.toString();
 	}
