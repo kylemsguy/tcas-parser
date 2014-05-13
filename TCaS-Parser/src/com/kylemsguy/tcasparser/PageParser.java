@@ -35,15 +35,14 @@ public class PageParser {
 
 	public void login(String username, String password) {
 		onAnswerPage = false;
-		Matcher notLoggedInMatcher;
 		WebElement loggedInElement;
 		WebElement usernameElement;
 		WebElement passwordElement;
 		WebElement loggestInElement;
 
 		driver.get("http://www.twocansandstring.com/login/");
-		
-		if (getLoggedIn()) {
+
+		if (!getLoggedIn()) {
 			// log in
 			usernameElement = driver.findElement(By.name("login_username"));
 			passwordElement = driver.findElement(By.name("login_password"));
@@ -61,20 +60,26 @@ public class PageParser {
 		}
 	}
 
-	public String getQuestion() {
+	public String getQuestion() throws Exception {
 		WebElement questionElement = null;
+		WebElement answerLink = driver.findElement(By.linkText("Answer"));
 		onAnswerPage = true;
-		driver.get("http://twocansandstring.com/answer/");
-		
+		answerLink.click(); // go to Answer page
+
 		// find the div with id "question_area". Right below it is the question
 		List<WebElement> divElements = driver.findElements(By.tagName("div"));
-		
-		for(WebElement element: divElements){
-			if(element.getAttribute("id").equals("question_area")){
+
+		for (WebElement element : divElements) {
+			if (element.getAttribute("id") == null)
+				continue;
+
+			if (element.getAttribute("id").equals("question_area")) {
 				questionElement = element;
 			}
 		}
-		assert(questionElement != null);
+		if (questionElement == null) {
+			throw new Exception("No question area found");
+		}
 		System.out.println(questionElement.getText());
 		return null;
 	}
