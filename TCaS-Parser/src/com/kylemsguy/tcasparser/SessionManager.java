@@ -60,7 +60,8 @@ public class SessionManager {
 		connection.setRequestProperty("Accept-Encoding", "gzip,deflate,sdch");
 		connection.setRequestProperty("Accept-Language", "en-US,en;q=0.8");
 		connection.setRequestProperty("Connection", "keep-alive");
-		//connection.setRequestProperty("Content-Length", Integer.toString(postParams.length()));
+		// connection.setRequestProperty("Content-Length",
+		// Integer.toString(postParams.length()));
 		connection.setFixedLengthStreamingMode(postParams.getBytes().length);
 		connection.setRequestProperty("Content-Type",
 				"application/x-www-form-urlencoded");
@@ -74,9 +75,9 @@ public class SessionManager {
 
 		connection.setRequestProperty("Referrer",
 				"http://twocansandstring.com/login/");
-		//connection.setInstanceFollowRedirects(true);
+		// connection.setInstanceFollowRedirects(true);
 		connection.setDoOutput(true);
-		//connection.setDoInput(true);
+		// connection.setDoInput(true);
 
 		// Send post request
 		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
@@ -84,10 +85,37 @@ public class SessionManager {
 		wr.flush();
 		wr.close();
 
-		int responseCode = connection.getResponseCode();
-		System.out.println("\nSending 'POST' request to URL : " + url);
-		System.out.println("Post parameters : " + postParams);
-		System.out.println("Response Code : " + responseCode);
+		boolean redirect = false;
+
+		// normally, 3xx is redirect
+		int status = connection.getResponseCode();
+		if (status != HttpURLConnection.HTTP_OK) {
+			if (status == HttpURLConnection.HTTP_MOVED_TEMP
+					|| status == HttpURLConnection.HTTP_MOVED_PERM
+					|| status == HttpURLConnection.HTTP_SEE_OTHER)
+				redirect = true;
+		}
+
+		System.out.println("Response Code ... " + status);
+
+		if (redirect) {
+
+			// get redirect url from "location" header field
+			String newUrl = connection.getHeaderField("Location");
+
+			// get the cookie if need, for login
+			String cookies = connection.getHeaderField("Set-Cookie");
+
+			// open the new connnection again
+			connection = (HttpURLConnection) new URL(newUrl).openConnection();
+			connection.setRequestProperty("Cookie", cookies);
+			connection.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
+			connection.addRequestProperty("User-Agent", "Mozilla");
+			connection.addRequestProperty("Referer", "google.com");
+
+			System.out.println("Redirect to URL : " + newUrl);
+
+		}
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				connection.getInputStream()));
@@ -98,11 +126,24 @@ public class SessionManager {
 			response.append(inputLine);
 		}
 		in.close();
-		
+
+		/*
+		 * int responseCode = connection.getResponseCode();
+		 * System.out.println("\nSending 'POST' request to URL : " + url);
+		 * System.out.println("Post parameters : " + postParams);
+		 * System.out.println("Response Code : " + responseCode);
+		 * 
+		 * BufferedReader in = new BufferedReader(new InputStreamReader(
+		 * connection.getInputStream())); String inputLine; StringBuffer
+		 * response = new StringBuffer();
+		 * 
+		 * while ((inputLine = in.readLine()) != null) {
+		 * response.append(inputLine); } in.close();
+		 */
 		// debug shows cookies
 		List<String> currCookies = connection.getHeaderFields().get(
 				"Set-Cookie");
-		for(String a: currCookies){
+		for (String a : currCookies) {
 			System.out.println(a);
 		}
 
@@ -155,7 +196,6 @@ public class SessionManager {
 
 		// Get the response cookies
 		this.setCookies(connection.getHeaderFields().get("Set-Cookie"));
-
 
 		return response.toString();
 	}
