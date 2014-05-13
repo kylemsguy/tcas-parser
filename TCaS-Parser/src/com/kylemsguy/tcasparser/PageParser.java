@@ -35,7 +35,6 @@ public class PageParser {
 
 	public void login(String username, String password) {
 		onAnswerPage = false;
-		WebElement loggedInElement;
 		WebElement usernameElement;
 		WebElement passwordElement;
 		WebElement loggestInElement;
@@ -65,6 +64,9 @@ public class PageParser {
 		WebElement answerLink = driver.findElement(By.linkText("Answer"));
 		onAnswerPage = true;
 		answerLink.click(); // go to Answer page
+		
+		// now we need to wait for question to load
+		WebDriverWait wait = new WebDriverWait(driver, 4000);
 
 		// find the div with id "question_area". Right below it is the question
 		List<WebElement> divElements = driver.findElements(By.tagName("div"));
