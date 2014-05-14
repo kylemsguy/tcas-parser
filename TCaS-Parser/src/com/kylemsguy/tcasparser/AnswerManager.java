@@ -1,5 +1,8 @@
 package com.kylemsguy.tcasparser;
 
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -7,6 +10,7 @@ import java.util.regex.Pattern;
 
 public class AnswerManager {
 	private final String QUESTION_URL = "http://twocansandstring.com/apiw/qa/getquestion";
+	private final String ANSWER_URL = "http://twocansandstring.com/apiw/qa/answer/";
 
 	private SessionManager session;
 
@@ -51,8 +55,14 @@ public class AnswerManager {
 		return question;
 	}
 
-	public void sendAnswer(String id, String answer) {
-		// TODO implement method
+	public void sendAnswer(String id, String rawAnswer) throws Exception {
+		//String answer = rawAnswer.replaceAll("\n", "$s");
+		String answer = rawAnswer;
+		String postParams = null;
+
+		postParams = "text" + "=" + URLEncoder.encode(answer, "UTF-8");
+
+		System.out.println(session.sendPost(ANSWER_URL + id + "/", postParams.toString()));
 	}
 
 	public void skipQuestion(boolean forever) {

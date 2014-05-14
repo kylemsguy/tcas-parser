@@ -40,11 +40,18 @@ public class SessionManager {
 		String postParams = getFormParams(page, username, password);
 
 		// Send data to login
-		sendPost(LOGIN, postParams);
+		String response = sendPost(LOGIN, postParams);
+
+		// debug; prints success iff logged in as kylemsguy
+		if (response.toString().matches(".*?[Kk]ylemsguy.*?")) {
+			System.out.println("Login Successful");
+		} else {
+			System.out.println("Login Failed");
+		}
 
 	}
 
-	public void sendPost(String url, String postParams) throws Exception {
+	public String sendPost(String url, String postParams) throws Exception {
 		// method borrows heavily from
 		// http://www.mkyong.com/java/how-to-automate-login-a-website-java-example/
 		// start the connection
@@ -129,12 +136,7 @@ public class SessionManager {
 		}
 		in.close();
 
-		// debug; prints success iff logged in as kylemsguy
-		if (response.toString().matches(".*?[Kk]ylemsguy.*?")) {
-			System.out.println("Login Successful");
-		} else {
-			System.out.println("Login Failed");
-		}
+		return response.toString();
 	}
 
 	public String getPageContent(String url) throws Exception {
