@@ -42,8 +42,8 @@ public class SessionManager {
 		// Send data to login
 		String response = sendPost(LOGIN, postParams);
 
-		// debug; prints success iff logged in as kylemsguy
-		if (response.toString().matches(".*?[Kk]ylemsguy.*?")) {
+		// debug; prints success iff logged in as AppTester
+		if (response.toString().matches(".*?AppTester.*?")) {
 			System.out.println("Login Successful");
 		} else {
 			System.out.println("Login Failed");
