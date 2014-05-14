@@ -80,8 +80,7 @@ public class SessionManager {
 
 		connection.setRequestProperty("User-Agent", USER_AGENT);
 
-		connection.setRequestProperty("Referrer",
-				"http://twocansandstring.com/login/");
+		//connection.setRequestProperty("Referrer", "http://twocansandstring.com/login/");
 		// connection.setInstanceFollowRedirects(true);
 		connection.setDoOutput(true);
 		connection.setDoInput(true);

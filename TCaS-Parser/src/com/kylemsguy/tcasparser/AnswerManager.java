@@ -30,7 +30,7 @@ public class AnswerManager {
 			throw new Exception("Not logged in.");
 		} else {
 			// extract ID
-			Pattern idPattern = Pattern.compile("(.*?)sid\\^(.*?)\\^(.*?)");
+			Pattern idPattern = Pattern.compile("(.*?)sid\\^i(.*?)\\^(.*?)");
 			Matcher idMatcher = idPattern.matcher(pageContent);
 			if (idMatcher.find()) {
 				question.put("id", idMatcher.group(2));
