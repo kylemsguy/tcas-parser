@@ -44,7 +44,7 @@ public class SessionManager {
 
 	}
 
-	private void sendPost(String url, String postParams) throws Exception {
+	public void sendPost(String url, String postParams) throws Exception {
 		// method borrows heavily from
 		// http://www.mkyong.com/java/how-to-automate-login-a-website-java-example/
 		// start the connection
@@ -77,7 +77,7 @@ public class SessionManager {
 				"http://twocansandstring.com/login/");
 		// connection.setInstanceFollowRedirects(true);
 		connection.setDoOutput(true);
-		// connection.setDoInput(true);
+		connection.setDoInput(true);
 
 		// Send post request
 		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
@@ -96,6 +96,8 @@ public class SessionManager {
 				redirect = true;
 		}
 
+		System.out.println("\nSending 'POST' request to URL : " + url);
+		System.out.println("Post parameters : " + postParams);
 		System.out.println("Response Code ... " + status);
 
 		if (redirect) {
@@ -127,28 +129,7 @@ public class SessionManager {
 		}
 		in.close();
 
-		/*
-		 * int responseCode = connection.getResponseCode();
-		 * System.out.println("\nSending 'POST' request to URL : " + url);
-		 * System.out.println("Post parameters : " + postParams);
-		 * System.out.println("Response Code : " + responseCode);
-		 * 
-		 * BufferedReader in = new BufferedReader(new InputStreamReader(
-		 * connection.getInputStream())); String inputLine; StringBuffer
-		 * response = new StringBuffer();
-		 * 
-		 * while ((inputLine = in.readLine()) != null) {
-		 * response.append(inputLine); } in.close();
-		 */
-		// debug shows cookies
-		List<String> currCookies = connection.getHeaderFields().get(
-				"Set-Cookie");
-		for (String a : currCookies) {
-			System.out.println(a);
-		}
-
-		// debug; prints success iff logged in
-		// System.out.println(response.toString());
+		// debug; prints success iff logged in as kylemsguy
 		if (response.toString().matches(".*?[Kk]ylemsguy.*?")) {
 			System.out.println("Login Successful");
 		} else {
@@ -156,9 +137,7 @@ public class SessionManager {
 		}
 	}
 
-	private String getPageContent(String url) throws Exception {
-		// method practically copied from
-		// http://www.mkyong.com/java/how-to-automate-login-a-website-java-example/
+	public String getPageContent(String url) throws Exception {
 		// start the connection
 		URL obj = new URL(url);
 		connection = (HttpURLConnection) obj.openConnection();
@@ -240,6 +219,10 @@ public class SessionManager {
 
 	public void setCookies(List<String> cookies) {
 		this.cookies = cookies;
+	}
+
+	public HttpURLConnection getConnection() {
+		return connection;
 	}
 
 }
