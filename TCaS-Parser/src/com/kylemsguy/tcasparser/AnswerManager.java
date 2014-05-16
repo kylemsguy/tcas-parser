@@ -1,17 +1,16 @@
 package com.kylemsguy.tcasparser;
 
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AnswerManager {
-	private final String QUESTION_URL = "http://twocansandstring.com/apiw/qa/getquestion";
-	private final String ANSWER_URL = "http://twocansandstring.com/apiw/qa/answer/";
-	private final String SKIP_URL = "http://twocansandstring.com/apiw/qa/skip/";
+	private final String BASE_URL = SessionManager.BASE_URL;
+	private final String QUESTION_URL = BASE_URL + "apiw/qa/getquestion/";
+	private final String ANSWER_URL = BASE_URL + "apiw/qa/answer/";
+	private final String SKIP_URL = BASE_URL + "apiw/qa/skip/";
 
 	private SessionManager session;
 

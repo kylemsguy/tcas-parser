@@ -10,9 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,7 +20,8 @@ import org.jsoup.select.Elements;
 public class SessionManager {
 	// let's define some constants
 	private final String USER_AGENT = "Mozilla/5.0";
-	private final String LOGIN = "http://www.twocansandstring.com/login/";
+	public static final String BASE_URL = "http://twocansandstring.com/";
+	private final String LOGIN = BASE_URL + "login/";
 
 	private List<String> cookies;
 	private HttpURLConnection connection;
@@ -80,7 +79,8 @@ public class SessionManager {
 
 		connection.setRequestProperty("User-Agent", USER_AGENT);
 
-		//connection.setRequestProperty("Referrer", "http://twocansandstring.com/login/");
+		// connection.setRequestProperty("Referrer",
+		// "http://twocansandstring.com/login/");
 		// connection.setInstanceFollowRedirects(true);
 		connection.setDoOutput(true);
 		connection.setDoInput(true);
