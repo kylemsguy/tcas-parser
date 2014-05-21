@@ -17,14 +17,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-/**
- * @author Kyle
- *
- */
-/**
- * @author Kyle
- * 
- */
 public class SessionManager {
 	// let's define some constants
 	private final String USER_AGENT = "Mozilla/5.0";
