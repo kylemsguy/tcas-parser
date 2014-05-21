@@ -10,6 +10,7 @@ public class QuestionManager {
 			+ "apiw/qa/notifications/";
 
 	private SessionManager session;
+	private Map<Integer, Question> questionAns;
 
 	public QuestionManager(SessionManager session) {
 		this.session = session;
@@ -20,14 +21,12 @@ public class QuestionManager {
 		session.sendPost(ASK_URL, postQuestion);
 	}
 
-	public String[] getQuestions() throws Exception {
+	public Map<Integer, Question> getQuestions() throws Exception {
 		// TODO: parse and tokenize data
 		String rawData = session.getPageContent(QUESTION_URL);
-		String[] splitData = rawData.split("\\^");
-		for(String a: splitData){
-			System.out.println(a);
-		}
-		return splitData;
+		questionAns = QAObject.parseData(rawData);
+		
+		return questionAns;
 	}
 
 }
