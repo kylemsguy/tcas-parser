@@ -6,5 +6,7 @@ public class MessageManager {
 	public MessageManager() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	// NOTE: may have to manually parse web page as XHTML (can use XML parser)
 
 }

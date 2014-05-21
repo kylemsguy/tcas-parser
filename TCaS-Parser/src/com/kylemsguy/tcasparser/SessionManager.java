@@ -17,6 +17,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+/**
+ * @author Kyle
+ *
+ */
+/**
+ * @author Kyle
+ * 
+ */
 public class SessionManager {
 	// let's define some constants
 	private final String USER_AGENT = "Mozilla/5.0";
@@ -30,6 +38,13 @@ public class SessionManager {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * Logs in to the site with the given username and password.
+	 * 
+	 * @param username
+	 * @param password
+	 * @throws Exception
+	 */
 	public void login(String username, String password) throws Exception {
 		// make sure cookies are on
 		CookieHandler.setDefault(new CookieManager());
@@ -50,9 +65,18 @@ public class SessionManager {
 
 	}
 
+	/**
+	 * Sends a POST request to the url with a String as the parameters. The
+	 * parameters must have been pre-formatted beforehand.
+	 * 
+	 * @param url
+	 *            The URL to send the POST request to
+	 * @param postParams
+	 *            The parameters to be sent. This will be sent as-is.
+	 * @return
+	 * @throws Exception
+	 */
 	public String sendPost(String url, String postParams) throws Exception {
-		// method borrows heavily from
-		// http://www.mkyong.com/java/how-to-automate-login-a-website-java-example/
 		// start the connection
 		URL obj = new URL(url);
 		connection = (HttpURLConnection) obj.openConnection();
@@ -138,6 +162,14 @@ public class SessionManager {
 		return response.toString();
 	}
 
+	/**
+	 * Gets the content of a page.
+	 * 
+	 * @param url
+	 *            The page whose content should be retrieved
+	 * @return
+	 * @throws Exception
+	 */
 	public String getPageContent(String url) throws Exception {
 		// start the connection
 		URL obj = new URL(url);
@@ -180,6 +212,18 @@ public class SessionManager {
 		return response.toString();
 	}
 
+	/**
+	 * Gets the parameters of a form on a page.
+	 * 
+	 * @param html
+	 *            the HTMl of the page
+	 * @param username
+	 *            The username that should be used
+	 * @param password
+	 *            The password that should be used
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	public String getFormParams(String html, String username, String password)
 			throws UnsupportedEncodingException {
 
