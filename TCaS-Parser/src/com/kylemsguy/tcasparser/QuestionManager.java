@@ -22,8 +22,8 @@ public class QuestionManager {
 	}
 
 	public Map<Integer, Question> getQuestions() throws Exception {
-		// TODO: parse and tokenize data
 		String rawData = session.getPageContent(QUESTION_URL);
+		System.out.println(rawData);
 		questionAns = QAObject.parseData(rawData);
 		
 		return questionAns;

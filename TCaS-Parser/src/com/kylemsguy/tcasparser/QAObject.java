@@ -1,7 +1,5 @@
 package com.kylemsguy.tcasparser;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -30,7 +28,7 @@ public abstract class QAObject {
 
 		// regex objects
 		Pattern qPattern = Pattern
-				.compile("lsQ\\^i(\\d+)\\^b0\\^i1\\^s(.*?)\\^\\^");
+				.compile("lsQ\\^i(\\d+)\\^b[01]\\^i1\\^s(.*?)\\^\\^");
 		Pattern aPattern = Pattern
 				.compile("lsA\\^i(\\d+)\\^i(\\d+)\\^b([01])\\^s(.*?)\\^\\^");
 
