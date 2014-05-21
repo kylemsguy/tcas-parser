@@ -40,17 +40,17 @@ public abstract class QAObject {
 		while (qMatcher.find()) {
 			// get data from regex
 			int id = Integer.parseInt(qMatcher.group(1));
-			Question q = new Question(id, qMatcher.group(2));
-			System.out.println(qMatcher.group(2));
-
+			String strQ = qMatcher.group(2).replaceAll("\\$n", "\n");
+			Question q = new Question(id, strQ);
+			
 			// insert into map
 			questions.put(id, q);
 		}
 
 		while (aMatcher.find()) {
 			// get data from regex
-			int qId = Integer.parseInt(aMatcher.group(1));
-			int aId = Integer.parseInt(aMatcher.group(2));
+			int qId = Integer.parseInt(aMatcher.group(2));
+			int aId = Integer.parseInt(aMatcher.group(1));
 			int intRead = Integer.parseInt(aMatcher.group(3));
 			boolean read;
 			// check if read
@@ -59,7 +59,7 @@ public abstract class QAObject {
 			} else {
 				read = true;
 			}
-			String ans = aMatcher.group(4);
+			String ans = aMatcher.group(4).replaceAll("\\$n", "\n");
 
 			// get relevant Question object
 			Question q = questions.get(qId);

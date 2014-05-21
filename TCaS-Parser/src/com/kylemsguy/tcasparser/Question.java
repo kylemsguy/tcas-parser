@@ -1,5 +1,6 @@
 package com.kylemsguy.tcasparser;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -13,6 +14,10 @@ public class Question extends QAObject {
 
 	public Set<Integer> getAnswerIDs() {
 		return answers.keySet();
+	}
+	
+	public Collection<Answer> getAnswers(){
+		return answers.values();
 	}
 	
 	public Answer getAnswerByID(int id){
