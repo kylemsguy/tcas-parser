@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public abstract class QAObject {
 	private int id;
 	private String content;
-	
+
 	public QAObject(int id, String content) {
 		this.id = id;
 		this.content = content;
@@ -23,27 +23,59 @@ public abstract class QAObject {
 	public String getContent() {
 		return content;
 	}
-	
-	public static Map<Integer, Question> parseData(String data){
+
+	public static Map<Integer, Question> parseData(String data)
+			throws NoSuchQuestionException {
 		Map<Integer, Question> questions = new TreeMap<Integer, Question>();
-		
+
 		// regex objects
-		Pattern qPattern = Pattern.compile("lsQ\\^i(\\d+)\\^s(.*?)\\^\\^");
-		Pattern aPattern = Pattern.compile("lsA\\^i(\\d+)\\^(\\d+)\\^s(.*?)\\^\\^");
-		
+		Pattern qPattern = Pattern
+				.compile("lsQ\\^i(\\d+)\\^b0\\^i1\\^s(.*?)\\^\\^");
+		Pattern aPattern = Pattern
+				.compile("lsA\\^i(\\d+)\\^i(\\d+)\\^b([01])\\^s(.*?)\\^\\^");
+
 		Matcher qMatcher = qPattern.matcher(data);
 		Matcher aMatcher = aPattern.matcher(data);
-		
-		while(qMatcher.find()){
+
+		while (qMatcher.find()) {
 			// get data from regex
 			int id = Integer.parseInt(qMatcher.group(1));
 			Question q = new Question(id, qMatcher.group(2));
-			
+			System.out.println(qMatcher.group(2));
+
 			// insert into map
 			questions.put(id, q);
 		}
-		
-		
+
+		while (aMatcher.find()) {
+			// get data from regex
+			int qId = Integer.parseInt(aMatcher.group(1));
+			int aId = Integer.parseInt(aMatcher.group(2));
+			int intRead = Integer.parseInt(aMatcher.group(3));
+			boolean read;
+			// check if read
+			if (intRead == 0) {
+				read = false;
+			} else {
+				read = true;
+			}
+			String ans = aMatcher.group(4);
+
+			// get relevant Question object
+			Question q = questions.get(qId);
+
+			if (q == null) {
+				throw new NoSuchQuestionException(
+						"No such question found. Something has gone horribly wrong.");
+			}
+
+			// create answer object
+			Answer a = new Answer(aId, ans, q, read);
+
+			// add to answer object
+			q.addAnswer(a);
+		}
+
 		return questions;
 	}
 }
