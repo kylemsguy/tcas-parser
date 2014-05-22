@@ -6,24 +6,18 @@ public class NoSuchQuestionException extends Exception {
 		// TODO Auto-generated constructor stub
 	}
 
-	public NoSuchQuestionException(String message) {
-		super(message);
+	public NoSuchQuestionException(String detailMessage) {
+		super(detailMessage);
 		// TODO Auto-generated constructor stub
 	}
 
-	public NoSuchQuestionException(Throwable cause) {
-		super(cause);
+	public NoSuchQuestionException(Throwable throwable) {
+		super(throwable);
 		// TODO Auto-generated constructor stub
 	}
 
-	public NoSuchQuestionException(String message, Throwable cause) {
-		super(message, cause);
-		// TODO Auto-generated constructor stub
-	}
-
-	public NoSuchQuestionException(String message, Throwable cause,
-			boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
+	public NoSuchQuestionException(String detailMessage, Throwable throwable) {
+		super(detailMessage, throwable);
 		// TODO Auto-generated constructor stub
 	}
 
