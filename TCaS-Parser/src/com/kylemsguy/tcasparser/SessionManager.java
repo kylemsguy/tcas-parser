@@ -30,6 +30,19 @@ public class SessionManager {
 		// TODO Auto-generated constructor stub
 	}
 
+	public boolean checkLoggedIn() {
+		try {
+			String page = getPageContent(AnswerManager.QUESTION_URL);
+			if (page.startsWith("<!DOCTYPE html PUBLIC")) {
+				return false;
+			} else {
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	/**
 	 * Logs in to the site with the given username and password.
 	 * 
