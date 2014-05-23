@@ -1,3 +1,22 @@
+/*
+	This is an API for Two Cans and String
+	
+    Copyright (C) 2014  Kyle Zhou <kylezhou2002@hotmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    
+ */
 package com.kylemsguy.tcasparser;
 
 import java.io.BufferedReader;
@@ -89,28 +108,27 @@ public class SessionManager {
 		// now time to act like a browser
 		connection.setUseCaches(false);
 		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Host", "twocansandstring.com");
 		connection
 				.setRequestProperty("Accept",
 						"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
 		connection.setRequestProperty("Accept-Encoding", "gzip,deflate,sdch");
 		connection.setRequestProperty("Accept-Language", "en-US,en;q=0.8");
 		connection.setRequestProperty("Connection", "keep-alive");
-		// connection.setRequestProperty("Content-Length",
-		// Integer.toString(postParams.length()));
 		connection.setFixedLengthStreamingMode(postParams.getBytes().length);
 		connection.setRequestProperty("Content-Type",
 				"application/x-www-form-urlencoded");
+
 		// COOKIES
 		for (String cookie : this.cookies) {
 			connection.addRequestProperty("Cookie", cookie.split(";", 1)[0]);
 		}
-		connection.setRequestProperty("Host", "twocansandstring.com");
 
 		connection.setRequestProperty("User-Agent", USER_AGENT);
 
-		// connection.setRequestProperty("Referrer",
-		// "http://twocansandstring.com/login/");
-		// connection.setInstanceFollowRedirects(true);
+		connection.setRequestProperty("Referrer",
+				"http://twocansandstring.com/login/");
+
 		connection.setDoOutput(true);
 		connection.setDoInput(true);
 
