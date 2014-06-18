@@ -71,7 +71,8 @@ public class SessionManager {
 	 */
 	public void login(String username, String password) throws Exception {
 		// make sure cookies are on
-		CookieHandler.setDefault(new CookieManager());
+		CookieManager cm = new CookieManager();
+		CookieHandler.setDefault(cm);
 
 		// GET form's data
 		String page = getPageContent(LOGIN);
@@ -106,8 +107,9 @@ public class SessionManager {
 		connection = (HttpURLConnection) obj.openConnection();
 
 		// now time to act like a browser
+		connection.setInstanceFollowRedirects(false);
 		connection.setUseCaches(false);
-		connection.setRequestMethod("POST");
+		//connection.setRequestMethod("POST");
 		connection.setRequestProperty("Host", "twocansandstring.com");
 		connection
 				.setRequestProperty("Accept",
@@ -122,8 +124,6 @@ public class SessionManager {
 		connection.setRequestProperty("Content-Type",
 				"application/x-www-form-urlencoded");
 
-		connection.setInstanceFollowRedirects(false);
-
 		// COOKIES
 		for (String cookie : this.cookies) {
 			connection.addRequestProperty("Cookie", cookie.split(";", 1)[0]);
@@ -137,6 +137,8 @@ public class SessionManager {
 
 		connection.setDoOutput(true);
 		connection.setDoInput(true);
+		
+		connection.connect();
 
 		// Send post request
 		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
