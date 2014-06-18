@@ -80,8 +80,8 @@ public class SessionManager {
 		// Send data to login
 		String response = sendPost(LOGIN, postParams);
 
-		// debug; prints success iff logged in as AppTester
-		if (response.toString().matches(".*?AppTester.*?")) {
+		// debug; prints success iff logged in
+		if (checkLoggedIn()) {
 			System.out.println("Login Successful");
 		} else {
 			System.out.println("Login Failed");
@@ -114,17 +114,23 @@ public class SessionManager {
 						"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
 		connection.setRequestProperty("Accept-Encoding", "gzip,deflate,sdch");
 		connection.setRequestProperty("Accept-Language", "en-US,en;q=0.8");
+
 		connection.setRequestProperty("Connection", "keep-alive");
+		//connection.setRequestProperty("Connection", "close");
+		
 		connection.setFixedLengthStreamingMode(postParams.getBytes().length);
 		connection.setRequestProperty("Content-Type",
 				"application/x-www-form-urlencoded");
+
+		connection.setInstanceFollowRedirects(false);
 
 		// COOKIES
 		for (String cookie : this.cookies) {
 			connection.addRequestProperty("Cookie", cookie.split(";", 1)[0]);
 		}
 
-		connection.setRequestProperty("User-Agent", USER_AGENT);
+		// connection.setRequestProperty("User-Agent", USER_AGENT);
+		connection.setRequestProperty("User-Agent", "");
 
 		connection.setRequestProperty("Referrer",
 				"http://twocansandstring.com/login/");
@@ -153,24 +159,27 @@ public class SessionManager {
 		System.out.println("Post parameters : " + postParams);
 		System.out.println("Response Code ... " + status);
 
-		if (redirect) {
-
-			// get redirect url from "location" header field
-			String newUrl = connection.getHeaderField("Location");
-
-			// get the cookie if need, for login
-			String cookies = connection.getHeaderField("Set-Cookie");
-
-			// open the new connnection again
-			connection = (HttpURLConnection) new URL(newUrl).openConnection();
-			connection.setRequestProperty("Cookie", cookies);
-			connection.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
-			connection.addRequestProperty("User-Agent", "Mozilla");
-			connection.addRequestProperty("Referer", "google.com");
-
-			System.out.println("Redirect to URL : " + newUrl);
-
-		}
+		/*
+		 * if (redirect) {
+		 * 
+		 * // get redirect url from "location" header field String newUrl =
+		 * connection.getHeaderField("Location");
+		 * 
+		 * // get the cookie if need, for login String cookies =
+		 * connection.getHeaderField("Set-Cookie");
+		 * 
+		 * // open the new connnection again connection = (HttpURLConnection)
+		 * new URL(newUrl).openConnection();
+		 * connection.setRequestProperty("Cookie", cookies);
+		 * connection.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
+		 * // connection.addRequestProperty("User-Agent", "Mozilla");
+		 * connection.addRequestProperty("User-Agent", "");
+		 * connection.addRequestProperty("Referer", "google.com");
+		 * 
+		 * System.out.println("Redirect to URL : " + newUrl);
+		 * 
+		 * }
+		 */
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				connection.getInputStream()));
@@ -204,7 +213,8 @@ public class SessionManager {
 		connection.setUseCaches(false);
 
 		// act like a browser
-		connection.setRequestProperty("User-Agent", USER_AGENT);
+		// connection.setRequestProperty("User-Agent", USER_AGENT);
+		connection.setRequestProperty("User-Agent", "");
 		connection
 				.setRequestProperty("Accept",
 						"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
