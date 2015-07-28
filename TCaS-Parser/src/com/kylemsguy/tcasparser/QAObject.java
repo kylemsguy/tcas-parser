@@ -1,98 +1,112 @@
-/*
-	This is an API for Two Cans and String
-	
-    Copyright (C) 2014  Kyle Zhou <kylezhou2002@hotmail.com>
+package com.kylemsguy.tcasmobile.backend;
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-    
- */
-package com.kylemsguy.tcasparser;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class QAObject {
-	private int id;
-	private String content;
+    private int id;
+    private String content;
 
-	public QAObject(int id, String content) {
-		this.id = id;
-		this.content = content;
-	}
+    public QAObject(int id, String content) {
+        this.id = id;
+        this.content = content;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public String getContent() {
-		return content;
-	}
+    public String getContent() {
+        return content;
+    }
 
-	public static Map<Integer, Question> parseData(String data)
-			throws NoSuchQuestionException {
-		Map<Integer, Question> questions = new TreeMap<Integer, Question>();
+    public String toString() {
+        return "QAObject <" + id + "> " + content;
+    }
 
-		// regex objects
-		Pattern qPattern = Pattern
-				.compile("lsQ\\^i(\\d+)\\^b[01]\\^i1\\^s(.*?)\\^\\^");
-		Pattern aPattern = Pattern
-				.compile("lsA\\^i(\\d+)\\^i(\\d+)\\^b([01])\\^s(.*?)\\^\\^");
+    public static List<Question> parseData(String data)
+            throws NoSuchQuestionException {
+        List<Question> questions = new ArrayList<Question>();
 
-		Matcher qMatcher = qPattern.matcher(data);
-		Matcher aMatcher = aPattern.matcher(data);
+        // regex objects
+        Pattern qPattern = Pattern
+                .compile("lsQ\\^i(\\d+)\\^b[01]\\^i1\\^s(.*?)\\^\\^");
+        Pattern aPattern = Pattern
+                .compile("lsA\\^i(\\d+)\\^i(\\d+)\\^b([01])\\^s(.*?)\\^\\^");
 
-		while (qMatcher.find()) {
-			// get data from regex
-			int id = Integer.parseInt(qMatcher.group(1));
-			String strQ = qMatcher.group(2).replaceAll("\\$n", "\n");
-			Question q = new Question(id, strQ);
+        Matcher qMatcher = qPattern.matcher(data);
+        Matcher aMatcher = aPattern.matcher(data);
 
-			// insert into map
-			questions.put(id, q);
-		}
+        while (qMatcher.find()) {
+            // get data from regex
+            int id = Integer.parseInt(qMatcher.group(1));
+            String strQ = qMatcher.group(2).replaceAll("\\$n", "\n");
+            Question q = new Question(id, strQ);
 
-		while (aMatcher.find()) {
-			// get data from regex
-			int qId = Integer.parseInt(aMatcher.group(2));
-			int aId = Integer.parseInt(aMatcher.group(1));
-			int intRead = Integer.parseInt(aMatcher.group(3));
-			boolean read;
-			// check if read
-			if (intRead == 0) {
-				read = false;
-			} else {
-				read = true;
-			}
-			String ans = aMatcher.group(4).replaceAll("\\$n", "\n");
+            // insert into map
+            questions.add(q);
+        }
 
-			// get relevant Question object
-			Question q = questions.get(qId);
+        while (aMatcher.find()) {
+            // get data from regex
+            int qId = Integer.parseInt(aMatcher.group(2));
+            int aId = Integer.parseInt(aMatcher.group(1));
+            int intRead = Integer.parseInt(aMatcher.group(3));
+            boolean read;
+            // check if read
+            if (intRead == 0) {
+                read = false;
+            } else {
+                read = true;
+            }
+            String ans = aMatcher.group(4).replaceAll("\\$n", "\n");
 
-			if (q == null) {
-				throw new NoSuchQuestionException(
-						"No such question found. Something has gone horribly wrong.");
-			}
+            // get relevant Question object
+            Question q = null;
 
-			// create answer object
-			Answer a = new Answer(aId, ans, q, read);
+            for (Question iq : questions) {
+                if (iq.getId() == qId) {
+                    q = iq;
+                    break;
+                }
+            }
 
-			// add to answer object
-			q.addAnswer(a);
-		}
+            if (q == null) {
+                throw new NoSuchQuestionException(
+                        "Can't find question that was just inserted. Something has gone horribly wrong.");
+            }
 
-		return questions;
-	}
+            // create answer object
+            Answer a = new Answer(aId, ans, q, read);
+
+            // add to answer object
+            q.addAnswer(a);
+        }
+
+        return questions;
+    }
+
+    public static Map<String, List<String>> questionToListData(List<Question> questions) {
+        Map<String, List<String>> listData = new TreeMap<String, List<String>>();
+
+        for (Question q : questions) {
+            String questionTitle = q.getContent();
+            List<String> answerTitles = new ArrayList<String>();
+
+            for (Answer a : q.getAnswers()) {
+                answerTitles.add(a.getContent());
+            }
+
+            listData.put(questionTitle, answerTitles);
+
+        }
+        return listData;
+
+    }
+
 }

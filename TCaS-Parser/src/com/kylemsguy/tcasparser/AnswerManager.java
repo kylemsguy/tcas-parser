@@ -1,23 +1,4 @@
-/*
-	This is an API for Two Cans and String
-	
-    Copyright (C) 2014  Kyle Zhou <kylezhou2002@hotmail.com>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-    
- */
-package com.kylemsguy.tcasparser;
+package com.kylemsguy.tcasmobile.backend;
 
 import java.net.URLEncoder;
 import java.util.Map;
@@ -26,10 +7,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AnswerManager {
-	private static final String BASE_URL = SessionManager.BASE_URL;
-	public static final String QUESTION_URL = BASE_URL + "apiw/qa/getquestion/";
-	private static final String ANSWER_URL = BASE_URL + "apiw/qa/answer/";
-	private static final String SKIP_URL = BASE_URL + "apiw/qa/skip/";
+    private static final String BASE_URL = SessionManager.BASE_URL;
+    public static final String QUESTION_URL = BASE_URL + "apiw/qa/getquestion/";
+    public static final String ANSWER_URL = BASE_URL + "apiw/qa/answer/";
+    public static final String SKIP_URL = BASE_URL + "apiw/qa/skip/";
 
 	private SessionManager session;
 
@@ -41,32 +22,32 @@ public class AnswerManager {
 	 * Gets a question from TwoCansandString
 	 * 
 	 * @return A map containing the ID and question
-	 * @throws Exception
+	 * @throws NotLoggedInException
 	 */
 	public Map<String, String> getQuestion() throws Exception {
 		String pageContent = session.getPageContent(QUESTION_URL);
-		Map<String, String> question = null;
+		Map<String, String> question;
 
 		question = extractQuestionData(pageContent);
 		return question;
 	}
 
 	private Map<String, String> extractQuestionData(String rawData)
-			throws Exception {
+			throws NotLoggedInException {
 		// check if logged in
 		if (rawData.matches(".*?<div id=\"login_nav\">"
 				+ "<a href=\"/login/\">Login</a>"
 				+ ".*?That page could not be found.*?")) {
-			throw new Exception("Not logged in.");
+			throw new NotLoggedInException("Not logged in.");
 		}
-		Map<String, String> question = new TreeMap<String, String>();
+		Map<String, String> question = new TreeMap<>();
 		// extract ID
 		Pattern idPattern = Pattern.compile("(.*?)sid\\^i(.*?)\\^(.*?)");
 		Matcher idMatcher = idPattern.matcher(rawData);
 		if (idMatcher.find()) {
 			question.put("id", idMatcher.group(2));
 		} else {
-			throw new Exception("Not logged in.");
+			throw new NotLoggedInException("Not logged in.");
 		}
 
 		// extract content
@@ -79,7 +60,7 @@ public class AnswerManager {
 
 			question.put("content", newContent);
 		} else {
-			throw new Exception("Not logged in.");
+			throw new NotLoggedInException("Not logged in.");
 		}
 		return question;
 	}
@@ -87,9 +68,9 @@ public class AnswerManager {
 	/**
 	 * Takes in the ID of the question and the answer, and sends the request to
 	 * TwoCansandString
-	 * 
-	 * @param id
-	 * @param rawAnswer
+	 *
+	 * @param id Quesiton ID
+	 * @param rawAnswer Unencoded answer given by user
 	 * @return A map containing data for the next question.
 	 * @throws Exception
 	 */
@@ -124,7 +105,7 @@ public class AnswerManager {
 		}
 
 		String pageContent = session.getPageContent(skip);
-		Map<String, String> question = null;
+		Map<String, String> question;
 
 		// check if logged in
 		if (pageContent.matches(".*?<div id=\"login_nav\">"

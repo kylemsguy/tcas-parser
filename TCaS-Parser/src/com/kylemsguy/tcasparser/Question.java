@@ -1,50 +1,82 @@
-/*
-	This is an API for Two Cans and String
-	
-    Copyright (C) 2014  Kyle Zhou <kylezhou2002@hotmail.com>
+package com.kylemsguy.tcasmobile.backend;
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-    
- */
-package com.kylemsguy.tcasparser;
-
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 public class Question extends QAObject {
-	private Map<Integer, Answer> answers = new TreeMap<Integer, Answer>();
+    private List<Answer> answers;
 
-	public Question(int id, String content) {
-		super(id, content);
-	}
+    public Question(int id, String content) {
+        super(id, content);
+        answers = new ArrayList<>();
+    }
 
-	public Set<Integer> getAnswerIDs() {
-		return answers.keySet();
-	}
+    public List<Integer> getAnswerIDs() {
+        List<Integer> ids = new ArrayList<>();
+        for (Answer a : answers) {
+            ids.add(a.getId());
+        }
+        return ids;
+    }
 
-	public Collection<Answer> getAnswers() {
-		return answers.values();
-	}
+    /**
+     * Returns a shallow copy of the Answers
+     *
+     * @return the answers to the Question
+     */
+    public List<Answer> getAnswersList() {
+        return answers;
+    }
 
-	public Answer getAnswerByID(int id) {
-		return answers.get(id);
-	}
+    /**
+     * Returns a deep copy of all of the answers contained within this Question
+     *
+     * @return the Answers to the Question
+     */
+    public List<Answer> getAnswers() {
+        // make deep copy of answers before returning
+        List<Answer> answers = new ArrayList<>();
+        for(Answer answer: this.answers){
+            answers.add(answer);
+        }
+        return answers;
+    }
 
-	public void addAnswer(Answer answer) {
-		answers.put(answer.getId(), answer);
-	}
+    public Question getReversed(){
+        Question q = new Question(getId(), getContent());
+        q.answers = getAnswersReverse();
+        return q;
+    }
 
+    public List<Answer> getAnswersReverse() {
+        List<Answer> revAnswers = getAnswers();
+        Collections.reverse(revAnswers);
+        return revAnswers;
+    }
+
+    public Answer getAnswerByID(int id) {
+        for (Answer a : answers) {
+            if (a.getId() == id) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+    }
+
+    public boolean removeAnswer(Answer answer) {
+        return answers.remove(answer);
+    }
+
+    public String toString() {
+        return "Question <" + getId() + "> " + getContent();
+    }
 }

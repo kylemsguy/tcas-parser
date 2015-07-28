@@ -1,51 +1,67 @@
-/*
-	This is an API for Two Cans and String
-	
-    Copyright (C) 2014  Kyle Zhou <kylezhou2002@hotmail.com>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-    
- */
-package com.kylemsguy.tcasparser;
+package com.kylemsguy.tcasmobile.backend;
 
 import java.net.URLEncoder;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class QuestionManager {
-	private final String ASK_URL = SessionManager.BASE_URL + "apiw/qa/ask/";
-	private final String QUESTION_URL = SessionManager.BASE_URL
-			+ "apiw/qa/notifications/";
+    private final String ASK_URL = SessionManager.BASE_URL + "apiw/qa/ask/";
+    private final String QUESTION_URL = SessionManager.BASE_URL + "apiw/qa/notifications/";
+    private final String DEL_QUESTION_URL = SessionManager.BASE_URL + "apiw/qa/delete/question/";
+    private final String DEL_ANSWER_URL = SessionManager.BASE_URL + "apiw/qa/delete/answer/";
+    private final String MARK_READ_URL = SessionManager.BASE_URL + "apiw/qa/markread/";
 
-	private SessionManager session;
-	private Map<Integer, Question> questionAns;
+    private SessionManager session;
+    private List<Question> questionAns;
 
-	public QuestionManager(SessionManager session) {
-		this.session = session;
-	}
+    public QuestionManager(SessionManager session) {
+        this.session = session;
+    }
 
-	public void askQuestion(String question) throws Exception {
-		String postQuestion = "text=" + URLEncoder.encode(question, "UTF-8");
-		session.sendPost(ASK_URL, postQuestion);
-	}
+    public void askQuestion(String question) throws Exception {
+        String postQuestion = "text=" + URLEncoder.encode(question, "UTF-8");
+        session.sendPost(ASK_URL, postQuestion);
+    }
 
-	public Map<Integer, Question> getQuestions() throws Exception {
-		String rawData = session.getPageContent(QUESTION_URL);
-		System.out.println(rawData);
-		questionAns = QAObject.parseData(rawData);
+    public List<Question> getQuestions() throws Exception {
+        String rawData = session.getPageContent(QUESTION_URL);
+        if (SessionManager.BACKEND_DEBUG)
+            System.out.println(rawData);
+        questionAns = QAObject.parseData(rawData);
 
-		return questionAns;
-	}
+        return questionAns;
+    }
+
+    public void deleteQuestion(Question question) throws Exception {
+        // send a request deleting the question
+        String deleteURL = DEL_QUESTION_URL + question.getId() + "/";
+        session.getPageContent(deleteURL);
+
+        // remove the question from the list
+        questionAns.remove(question);
+    }
+
+    public void deleteAnswer(Question question, Answer answer) throws Exception {
+        // send a request deleting the answer
+        String deleteURL = DEL_ANSWER_URL + answer.getId() + "/";
+        session.getPageContent(deleteURL);
+
+        // remove the question from the list
+        question.removeAnswer(answer);
+    }
+
+    public void markAnswerRead(Answer answer) throws Exception {
+        // send a request marking the answer as read
+        String requestURL = MARK_READ_URL + answer.getId() + "/";
+        session.getPageContent(requestURL);
+
+        // mark question as read locally
+        answer.markRead();
+    }
+
+    public void replyToAnswer(Answer answer) {
+        // TODO implement once there's an API OR open WebView
+    }
 
 }
